@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Microsoft.Extensions.DependencyInjection\t2f3yoci.bty~" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper.Oracle" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.100" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Brunsker.Integracao.Domain\Brunsker.Integracao.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
