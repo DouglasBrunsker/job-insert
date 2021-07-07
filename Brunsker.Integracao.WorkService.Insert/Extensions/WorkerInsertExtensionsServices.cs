@@ -17,9 +17,9 @@ namespace Brunsker.Integracao.WorkService.Insert.Extensions
 
             services.AddRabbitAdapterConfiguration();
 
-            // services.AddRefitClient<IIntegracaoApi>().ConfigureHttpClient(c => c.BaseAddress = new Uri("http://168.138.250.55:4400"));
+            services.AddRefitClient<IIntegracaoApi>().ConfigureHttpClient(c => c.BaseAddress = new Uri("http://168.138.250.55:4400"));
 
-            services.AddRefitClient<IIntegracaoApi>().ConfigureHttpClient(c => c.BaseAddress = new Uri("http://localhost:5000"));
+            // services.AddRefitClient<IIntegracaoApi>().ConfigureHttpClient(c => c.BaseAddress = new Uri("http://localhost:5000"));
 
             services.Configure<RabbitMqConfiguration>(configuration.GetSection("RabbitMqConfiguration"));
 
