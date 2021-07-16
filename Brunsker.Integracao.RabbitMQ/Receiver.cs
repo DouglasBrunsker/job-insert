@@ -249,7 +249,13 @@ namespace Brunsker.Integracao.RabbitMQ
                                 retornoExecucao = await oracleRepositoryAdapter.PCCONSUM(mensagens, "pkg_webserv_update_bsnotas.PROC_UPD_PCCONSUM");
                                 break;
 
+                            case Contexto.Integracao_PCCONTAS:
+                                retornoExecucao = await oracleRepositoryAdapter.PCCONSUM(mensagens, "pkg_webserv_insert_bsnotas.PROC_INC_PCCONTA");
+                                break;
 
+                            case Contexto.Integracao_AtualizacaoPCCONTAS:
+                                retornoExecucao = await oracleRepositoryAdapter.PCCONSUM(mensagens, "pkg_webserv_update_bsnotas.PROC_UPD_PCCONTA");
+                                break;
 
                             default:
                                 break;

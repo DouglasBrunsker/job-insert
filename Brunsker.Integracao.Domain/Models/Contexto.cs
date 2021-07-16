@@ -32,6 +32,8 @@
 
 
         /*novos*/
+        Integracao_PCCONTAS,
+        Integracao_AtualizacaoPCCONTAS,
         Integracao_PreEntrada,
         Integracao_PreLancamento,
 

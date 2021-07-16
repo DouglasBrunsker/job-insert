@@ -927,6 +927,7 @@ namespace Brunsker.Integracao.OracleAdapter
                     dynamicParameters.Add("pSITUACAONFE", nfs.SITUACAONFE);
                     dynamicParameters.Add("pTIPOVENDA", nfs.TIPOVENDA);
                     dynamicParameters.Add("pCONDVENDA", nfs.TIPOVENDA);
+                    dynamicParameters.Add("pCODFISCAL", nfs.CODFISCAL);
                     dynamicParameters.Add("pCGCENT", nfs.CGCENT);
                     dynamicParameters.Add("pCGCFILIAL", nfs.CGCFILIAL);
                     dynamicParameters.Add("pIEENT", nfs.IEENT);
@@ -988,6 +989,40 @@ namespace Brunsker.Integracao.OracleAdapter
             }
 
             return pedidosJson;
+        }
+        public async Task<List<Message>> PCCONTA(List<Message> contas, string package)
+        {
+            using OracleConnection conn = new OracleConnection(_config.Connection.ConnectionString);
+
+            if (conn.State == ConnectionState.Closed) conn.Open();
+
+            foreach (var item in contas)
+            {
+                try
+                {
+                    var conta = JsonConvert.DeserializeObject<PCCONTAS>(item.Content);
+
+                    OracleDynamicParameters dynamicParameters = new OracleDynamicParameters();
+
+                    dynamicParameters.Add("pROWID", conta.ROWID_TB);
+                    dynamicParameters.Add("pSEQ_CLIENTE", conta.SEQ_CLIENTE);
+                    dynamicParameters.Add("pCODCONTA", conta.CODCONTA);
+                    dynamicParameters.Add("pCONTA", conta.CONTA);
+                    dynamicParameters.Add("pCONTACONTABIL", conta.CONTACONTABIL);
+
+                    await conn.QueryAsync(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
+
+                    contas.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = true);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e.Message);
+
+                    contas.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = false);
+                }
+            }
+
+            return contas;
         }
         public async Task<List<Message>> PrestAsync(List<Message> prestJson, string package)
         {
@@ -1187,6 +1222,7 @@ namespace Brunsker.Integracao.OracleAdapter
             }
             return xmlJson;
         }
+
     }
 }
 

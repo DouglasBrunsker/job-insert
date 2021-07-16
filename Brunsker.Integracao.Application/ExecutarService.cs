@@ -34,6 +34,8 @@ namespace Brunsker.Integracao.Application
 
             _logger.LogInformation("Inicio da execucao de processamento, :" + " " + DateTime.Now);
 
+            await ProcessamentoPCCONTAS();
+
             await ProcessamentoConsultaClienteSefaz();
 
             await ProcessamentoNotasFiscaisPreEntrada();
@@ -68,6 +70,12 @@ namespace Brunsker.Integracao.Application
             _logger.LogInformation("Fim da execucao de processamento, :" + " " + DateTime.Now + "TempoExecucao:" + " " + sw.Elapsed.TotalMinutes + "Minutos");
 
             sw.Stop();
+        }
+        private async Task ProcessamentoPCCONTAS()
+        {
+            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCCONTAS);
+
+            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizacaoPCCONTAS);
         }
         private async Task ProcessamentoPCCONSUM()
         {

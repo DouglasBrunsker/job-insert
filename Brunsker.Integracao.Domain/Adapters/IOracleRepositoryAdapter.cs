@@ -21,6 +21,7 @@ namespace Brunsker.Integracao.Domain.Adapters
         Task<List<Message>> PCPARCELASC(List<Message> mensagens, string package);
         Task<List<Message>> PCCONSUM(List<Message> mensagens, string package);
         Task<List<Message>> PREENTRADA_WINTHOR(List<Message> mensagens, string package);
+        Task<List<Message>> PCCONTA(List<Message> contas, string package);
         Task<IEnumerable<ConsultaCliente>> SelectConsultaCliente();
         Task ConfirmaEnvioDadosApi(ConsultaCliente consulta, string sql);
 

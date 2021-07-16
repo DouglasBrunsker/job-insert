@@ -18,5 +18,6 @@ namespace Brunsker.Integracao.Domain.Models
         public string SITUACAONFE { get; set; }
         public string TIPOVENDA { get; set; }        
         public long CONDVENDA { get; set; }
+        public long CODFISCAL { get; set; }
     }
 }
