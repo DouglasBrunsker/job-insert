@@ -596,7 +596,39 @@ namespace Brunsker.Integracao.OracleAdapter
 
             return mensagens;
         }
+        public async Task<List<Message>> PCESTCOM(List<Message> mensagens, string package)
+        {
+            using (var conn = new OracleConnection(_config.Connection.ConnectionString))
+            {
+                if (conn.State == ConnectionState.Closed) conn.Open();
 
+                foreach (var item in mensagens)
+                {
+                    try
+                    {
+                        var pcestcom = JsonConvert.DeserializeObject<PCESTCOM>(item.Content);
+
+                        OracleDynamicParameters dynamicParameters = new OracleDynamicParameters();
+
+                        dynamicParameters.Add("pSEQ_CLIENTE", pcestcom.SEQ_CLIENTE);
+                        dynamicParameters.Add("pNUMTRANSENT", pcestcom.NUMTRANSENT);
+                        dynamicParameters.Add("pNUMTRANSVENDA", pcestcom.NUMTRANSVENDA);
+
+                        await conn.ExecuteAsync(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
+
+                        mensagens.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = true);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError(e.Message);
+
+                        mensagens.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = false);
+                    }
+                }
+            }
+
+            return mensagens;
+        }
 
         /*END NOVO*/
 

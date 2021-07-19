@@ -24,6 +24,7 @@ namespace Brunsker.Integracao.Domain.Adapters
         Task<List<Message>> PCCONTA(List<Message> contas, string package);
         Task<IEnumerable<ConsultaCliente>> SelectConsultaCliente();
         Task ConfirmaEnvioDadosApi(ConsultaCliente consulta, string sql);
+        Task<List<Message>> PCESTCOM(List<Message> mensagens, string package);
 
         /*END NOVO*/
 

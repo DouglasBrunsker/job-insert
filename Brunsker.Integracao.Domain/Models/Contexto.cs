@@ -32,6 +32,7 @@
 
 
         /*novos*/
+        Integracao_PCESTCOM,
         Integracao_PCCONTAS,
         Integracao_AtualizacaoPCCONTAS,
         Integracao_PreEntrada,

@@ -34,6 +34,8 @@ namespace Brunsker.Integracao.Application
 
             _logger.LogInformation("Inicio da execucao de processamento, :" + " " + DateTime.Now);
 
+            await ProcessamentoPCESTCOM();
+
             await ProcessamentoPCCONTAS();
 
             await ProcessamentoConsultaClienteSefaz();
@@ -70,6 +72,10 @@ namespace Brunsker.Integracao.Application
             _logger.LogInformation("Fim da execucao de processamento, :" + " " + DateTime.Now + "TempoExecucao:" + " " + sw.Elapsed.TotalMinutes + "Minutos");
 
             sw.Stop();
+        }
+        private async Task ProcessamentoPCESTCOM()
+        {
+            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCESTCOM);
         }
         private async Task ProcessamentoPCCONTAS()
         {
