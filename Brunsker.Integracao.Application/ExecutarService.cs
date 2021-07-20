@@ -34,6 +34,8 @@ namespace Brunsker.Integracao.Application
 
             _logger.LogInformation("Inicio da execucao de processamento, :" + " " + DateTime.Now);
 
+            await ProcessamentoNotasFiscaisSaida();
+
             await ProcessamentoPCESTCOM();
 
             await ProcessamentoPCCONTAS();
@@ -61,7 +63,7 @@ namespace Brunsker.Integracao.Application
             await ProcessamentoFiliais();
             await ProcessamentoXml();
             await ProcessamentoLancamentos();
-            await ProcessamentoNotasFiscaisSaida();
+
             await ProcessamentoClientes();
             await ProcessamentoDepartamentos();
             await ProcessamentoItens();
