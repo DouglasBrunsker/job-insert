@@ -958,7 +958,7 @@ namespace Brunsker.Integracao.OracleAdapter
                     dynamicParameters.Add("pCHAVENFE", nfs.CHAVENFE);
                     dynamicParameters.Add("pSITUACAONFE", nfs.SITUACAONFE);
                     dynamicParameters.Add("pTIPOVENDA", nfs.TIPOVENDA);
-                    dynamicParameters.Add("pCONDVENDA", nfs.TIPOVENDA);
+                    dynamicParameters.Add("pCONDVENDA", nfs.CONDVENDA);
                     dynamicParameters.Add("pCODFISCAL", nfs.CODFISCAL);
                     dynamicParameters.Add("pCGCENT", nfs.CGCENT);
                     dynamicParameters.Add("pCGCFILIAL", nfs.CGCFILIAL);
@@ -1130,7 +1130,7 @@ namespace Brunsker.Integracao.OracleAdapter
                     dynamicParameters.Add("pPERICM", prod.PERICM);
                     dynamicParameters.Add("pPERCST", prod.PERCST);
                     dynamicParameters.Add("pCODAUXILIAR", prod.CODAUXILIAR);
-                    dynamicParameters.Add("pCODAUXILIAR2", prod.CODAUXILIAR);
+                    dynamicParameters.Add("pCODAUXILIAR2", prod.CODAUXILIAR2);
                     dynamicParameters.Add("pCODFAB", prod.CODFAB);
                     dynamicParameters.Add("pNBM", prod.NBM);
                     dynamicParameters.Add("pDTEXCLUSAO", prod.DTEXCLUSAO);
