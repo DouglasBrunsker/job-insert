@@ -4,5 +4,6 @@ namespace Brunsker.Integracao.Domain.Models
     {
         public long NUMTRANSVENDA { get; set; }
         public long NUMTRANSENT { get; set; }
+        public decimal VLDEVOLUCAO { get; set; }
     }
 }

@@ -613,6 +613,7 @@ namespace Brunsker.Integracao.OracleAdapter
                         dynamicParameters.Add("pSEQ_CLIENTE", pcestcom.SEQ_CLIENTE);
                         dynamicParameters.Add("pNUMTRANSENT", pcestcom.NUMTRANSENT);
                         dynamicParameters.Add("pNUMTRANSVENDA", pcestcom.NUMTRANSVENDA);
+                        dynamicParameters.Add("pVLDEVOLUCAO", pcestcom.VLDEVOLUCAO);
 
                         await conn.ExecuteAsync(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
 
