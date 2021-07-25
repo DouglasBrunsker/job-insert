@@ -336,6 +336,56 @@ namespace Brunsker.Integracao.OracleAdapter
 
             return pcnegfornecs;
         }
+        public async Task<List<Message>> PCNFBASEENTAsync(List<Message> pcnfbaseents, string package)
+        {
+
+            using OracleConnection conn = new OracleConnection(_config.Connection.ConnectionString);
+
+            if (conn.State == ConnectionState.Closed)
+            {
+                conn.Open();
+            }
+
+            foreach (var item in pcnfbaseents)
+            {
+                try
+                {
+                    var pcnfbaseent = JsonConvert.DeserializeObject<PCNFBASEENT>(item.Content);
+
+                    OracleDynamicParameters dynamicParameters = new OracleDynamicParameters();
+
+                    dynamicParameters.Add("pSEQ_CLIENTE", pcnfbaseent.SEQ_CLIENTE);
+                    dynamicParameters.Add("pCODFILIAL", pcnfbaseent.CODFILIALNF);
+                    dynamicParameters.Add("pNUMTRANSENT", pcnfbaseent.NUMTRANSENT);
+                    dynamicParameters.Add("pDTENTRADA", pcnfbaseent.DTENTRADA);
+                    dynamicParameters.Add("pDTEMISSAO", pcnfbaseent.DTEMISSAO);
+                    dynamicParameters.Add("pESPECIE", pcnfbaseent.ESPECIE);
+                    dynamicParameters.Add("pSERIE", pcnfbaseent.SERIE);
+                    dynamicParameters.Add("pNUMNOTA", pcnfbaseent.NUMNOTA);
+                    dynamicParameters.Add("pCODFORNEC", pcnfbaseent.CODFORNEC);
+                    dynamicParameters.Add("pUF", pcnfbaseent.UF);
+                    dynamicParameters.Add("pVLTOTAL", pcnfbaseent.VLTOTAL);
+                    dynamicParameters.Add("pCODCONT", pcnfbaseent.CODCONT);
+                    dynamicParameters.Add("pCODFISCAL", pcnfbaseent.CODFISCAL);
+                    dynamicParameters.Add("pOBS", pcnfbaseent.OBS);
+                    dynamicParameters.Add("pSTRING_BANCO", pcnfbaseent.STRING_BANCO);
+
+
+                    await conn.QueryAsync(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
+
+                    pcnfbaseents.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = true);
+
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e.Message);
+
+                    pcnfbaseents.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = false);
+                }
+            }
+
+            return pcnfbaseents;
+        }
         public async Task<List<Message>> PCTABTRIBENTAsync(List<Message> pctabtribents, string package)
         {
 

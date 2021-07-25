@@ -34,10 +34,11 @@ namespace Brunsker.Integracao.Application
 
             _logger.LogInformation("Inicio da execucao de processamento, :" + " " + DateTime.Now);
 
-            await ProcessamentoPCESTCOM();
-            
-            await ProcessamentoNotasFiscaisSaida();
+            await ProcessamentoPCNFBASEENT();
 
+            await ProcessamentoPCESTCOM();
+
+            await ProcessamentoNotasFiscaisSaida();
 
             await ProcessamentoPCCONTAS();
 
@@ -48,28 +49,49 @@ namespace Brunsker.Integracao.Application
             await ProcessamentoFornecedores();
 
             await ProcessamentoPreEntrada();
+
             await ProcessamentoPreLancamento();
+
             await ProcessamentoPCPARCELASC();
+            
             await ProcessamentoPCCONSUM();
+            
             await ProcessamentoPCCODFABRICA();
+            
             await ProcessamentoProdutos();
+            
             await ProcessamentoPedidos();
+            
             await ProcessamentoPCTABPR();
+            
             await ProcessamentoPCEST();
+            
             await ProcessamentoPCCFO();
+            
             await ProcessamentoPCNEGFORNEC();
+            
             await ProcessamentoPCPRODFILIAL();
+            
             await ProcessamentoPCTABTRIBENT();
+            
             await ProcessamentoPCTRIBENTRADA();
+            
             await ProcessamentoFiliais();
+            
             await ProcessamentoXml();
+            
             await ProcessamentoLancamentos();
 
             await ProcessamentoClientes();
+            
             await ProcessamentoDepartamentos();
+            
             await ProcessamentoItens();
+            
             await ProcessamentoMovimentacoes();
+            
             await ProcessamentoNotasFiscaisEntrada();
+            
             await ProcessamentoPrest();
 
             _logger.LogInformation("Fim da execucao de processamento, :" + " " + DateTime.Now + "TempoExecucao:" + " " + sw.Elapsed.TotalMinutes + "Minutos");
@@ -79,6 +101,10 @@ namespace Brunsker.Integracao.Application
         private async Task ProcessamentoPCESTCOM()
         {
             await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCESTCOM);
+        }
+        private async Task ProcessamentoPCNFBASEENT()
+        {
+            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCNFBASEENT);
         }
         private async Task ProcessamentoPCCONTAS()
         {

@@ -63,8 +63,8 @@
         Integracao_AtualizacaoPCCODFABRICA,
 
         Integracao_PCPARCELASC,
+        Integracao_PCNFBASEENT,
         Integracao_AtualizacaoPCPARCELASC,
-
         Integracao_PCCONSUM,
         Integracao_AtualizacaoPCCONSUM,
 
