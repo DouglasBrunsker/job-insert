@@ -792,8 +792,8 @@ namespace Brunsker.Integracao.OracleAdapter
                     dynamicParameters.Add("pPERCALIQEXT", i.PERCALIQEXT);
                     dynamicParameters.Add("pPERCALIQEXTGUIA", i.PERCALIQEXTGUIA);
                     dynamicParameters.Add("pPERCREDICMS", i.PERCREDICMS);
-                    dynamicParameters.Add("pPERPIS", i.PERCREDICMS);
-                    dynamicParameters.Add("pPERCOFINS", i.PERCREDICMS);
+                    dynamicParameters.Add("pPERPIS", i.PERPIS);
+                    dynamicParameters.Add("pPERCOFINS", i.PERCOFINS);
                     dynamicParameters.Add("pSTRING_BANCO", i.STRING_BANCO);
                     dynamicParameters.Add("pDTINSERT", i.DT_INSERT);
                     dynamicParameters.Add("pMULTIPLOCOMPRAS", i.MULTIPLOCOMPRAS);
