@@ -8,6 +8,7 @@ namespace Brunsker.Integracao.Domain.Adapters
     {
         /*NOVO*/
         Task<IEnumerable<PreEntrada>> SelectPreEntrada();
+        Task<List<Message>> PCNFBASEENTAsync(List<Message> pcnfbaseents, string package);
         Task<IEnumerable<PreLancamento>> SelectLancamento();
         Task ConfirmaEnvioDadosApi(int seqCliente, string rowId, string sql);
         Task<List<Message>> PCESTAsync(List<Message> pcests, string package);

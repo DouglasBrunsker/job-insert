@@ -261,6 +261,10 @@ namespace Brunsker.Integracao.RabbitMQ
                                 retornoExecucao = await oracleRepositoryAdapter.PCESTCOM(mensagens, "pkg_webserv_insert_bsnotas.PROC_INC_PCESTCOM");
                                 break;
 
+                            case Contexto.Integracao_PCNFBASEENT:
+                                retornoExecucao = await oracleRepositoryAdapter.PCNFBASEENTAsync(mensagens, "pkg_webserv_insert_bsnotas.PROC_INS_PCNFBASEENT");
+                                break;
+
                             default:
                                 break;
                         }

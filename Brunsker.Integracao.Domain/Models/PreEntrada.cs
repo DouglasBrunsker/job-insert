@@ -19,9 +19,9 @@ namespace Brunsker.Integracao.Domain.Models
         public double VLIPI { get; set; }
         public double PERCIPI { get; set; }
         public long NUMNOTA { get; set; }
-        public long NUMPEDPREENT { get; set; }
         public int CODFILIAL { get; set; }
         public double PICMS { get; set; }
+        public long NUMPEDPREENT { get; set; }
         public double ICMS { get; set; }
         public double PICMSST { get; set; }
         public double BCPIS { get; set; }
@@ -55,5 +55,7 @@ namespace Brunsker.Integracao.Domain.Models
         public string CGCCLIENTE { get; set; }
         public string PLACAVEICULO { get; set; }
         public string UFVEICULO { get; set; }
+        public decimal PERCOFINS { get; set; }
+        public decimal PERPIS { get; set; }
     }
 }
