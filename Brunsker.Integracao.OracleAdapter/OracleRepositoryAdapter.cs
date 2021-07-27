@@ -954,6 +954,7 @@ namespace Brunsker.Integracao.OracleAdapter
                     dynamicParameters.Add("pSERIE", nfs.SERIE);
                     dynamicParameters.Add("pDTSAIDA", nfs.DTSAIDA);
                     dynamicParameters.Add("pVLTOTAL", nfs.VLTOTAL);
+                    dynamicParameters.Add("pVLBONIFIC", nfs.VLBONIFIC);
                     dynamicParameters.Add("pCODCLI", nfs.CODCLI);
                     dynamicParameters.Add("pNUMTRANSVENDA", nfs.NUMTRANSVENDA);
                     dynamicParameters.Add("pCHAVENFE", nfs.CHAVENFE);
