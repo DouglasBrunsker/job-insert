@@ -57,5 +57,6 @@ namespace Brunsker.Integracao.Domain.Models
         public string UFVEICULO { get; set; }
         public decimal PERCOFINS { get; set; }
         public decimal PERPIS { get; set; }
+        public decimal ST { get; set; }
     }
 }
