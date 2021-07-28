@@ -12,15 +12,16 @@ namespace Brunsker.Integracao.Application
 {
     public class ExecutarService : IExecutarService
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<ExecutarService> _logger;
         private readonly IRabbitMqAdapter _rabbitMqAdapter;
         private readonly IIntegracaoApi _refit;
         private readonly IOracleRepositoryAdapter _rep;
-        public ExecutarService(ILoggerFactory loggerFactory, IRabbitMqAdapter rabbitMqAdapter, IIntegracaoApi refit, IOracleRepositoryAdapter rep)
+        public ExecutarService(ILogger<ExecutarService> logger, IRabbitMqAdapter rabbitMqAdapter,
+                               IIntegracaoApi refit, IOracleRepositoryAdapter rep)
         {
-            _logger = loggerFactory?.CreateLogger<ExecutarService>() ?? throw new ArgumentNullException(nameof(loggerFactory));
+            _logger = logger;
 
-            _rabbitMqAdapter = rabbitMqAdapter ?? throw new ArgumentNullException(nameof(rabbitMqAdapter));
+            _rabbitMqAdapter = rabbitMqAdapter;
 
             _refit = refit;
 
@@ -53,45 +54,45 @@ namespace Brunsker.Integracao.Application
             await ProcessamentoPreLancamento();
 
             await ProcessamentoPCPARCELASC();
-            
+
             await ProcessamentoPCCONSUM();
-            
+
             await ProcessamentoPCCODFABRICA();
-            
+
             await ProcessamentoProdutos();
-            
+
             await ProcessamentoPedidos();
-            
+
             await ProcessamentoPCTABPR();
-            
+
             await ProcessamentoPCEST();
-            
+
             await ProcessamentoPCCFO();
-            
+
             await ProcessamentoPCNEGFORNEC();
-            
+
             await ProcessamentoPCPRODFILIAL();
-            
+
             await ProcessamentoPCTABTRIBENT();
-            
+
             await ProcessamentoPCTRIBENTRADA();
-            
+
             await ProcessamentoFiliais();
-            
+
             await ProcessamentoXml();
-            
+
             await ProcessamentoLancamentos();
 
             await ProcessamentoClientes();
-            
+
             await ProcessamentoDepartamentos();
-            
+
             await ProcessamentoItens();
-            
+
             await ProcessamentoMovimentacoes();
-            
+
             await ProcessamentoNotasFiscaisEntrada();
-            
+
             await ProcessamentoPrest();
 
             _logger.LogInformation("Fim da execucao de processamento, :" + " " + DateTime.Now + "TempoExecucao:" + " " + sw.Elapsed.TotalMinutes + "Minutos");
