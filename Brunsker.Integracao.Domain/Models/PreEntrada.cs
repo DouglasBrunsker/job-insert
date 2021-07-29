@@ -58,5 +58,6 @@ namespace Brunsker.Integracao.Domain.Models
         public decimal PERCOFINS { get; set; }
         public decimal PERPIS { get; set; }
         public decimal ST { get; set; }
+        public string CONVERTERUNIDADE { get; set; }
     }
 }
