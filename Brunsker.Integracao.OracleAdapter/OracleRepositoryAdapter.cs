@@ -1197,6 +1197,8 @@ namespace Brunsker.Integracao.OracleAdapter
                     dynamicParameters.Add("pPERCIVA", prod.PERCIVA);
                     dynamicParameters.Add("pCODFISCAL", prod.CODFISCAL);
                     dynamicParameters.Add("pSTRING_BANCO", prod.STRING_BANCO);
+                    dynamicParameters.Add("pQTUNIT", prod.QTUNIT);
+                    dynamicParameters.Add("pQTUNITCX", prod.QTUNITCX);
 
                     if (package != "pkg_webserv_update_bsnotas.PROC_UPD_PCPRODUT")
                     {

@@ -27,6 +27,8 @@ namespace Brunsker.Integracao.Domain.Models
         public double PERCIVA { get; set; }
         public DateTime? DTEXCLUSAO { get; set; }
         public long CODFISCAL { get; set; }
+        public decimal QTUNIT { get; set; }
+        public decimal QTUNITCX { get; set; }
     }
 }
 
