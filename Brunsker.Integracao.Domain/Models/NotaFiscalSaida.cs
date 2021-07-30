@@ -20,5 +20,6 @@ namespace Brunsker.Integracao.Domain.Models
         public string TIPOVENDA { get; set; }
         public long CONDVENDA { get; set; }
         public long CODFISCAL { get; set; }
+        public decimal VLBONIFIC { get; set; }
     }
 }

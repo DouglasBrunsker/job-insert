@@ -17,12 +17,11 @@ namespace Brunsker.Integracao.OracleAdapter
     public class OracleRepositoryAdapter : IOracleRepositoryAdapter
     {
         private readonly DbConnectionDbRepositoryAdapter _config;
-        private readonly ILogger _logger;
-        public OracleRepositoryAdapter(DbConnectionDbRepositoryAdapter config, ILoggerFactory loggerFactory)
+        private readonly ILogger<OracleRepositoryAdapter> _logger;
+        public OracleRepositoryAdapter(DbConnectionDbRepositoryAdapter config, ILogger<OracleRepositoryAdapter> logger)
         {
-            _config = config ?? throw new ArgumentNullException(nameof(_config));
-
-            _logger = loggerFactory?.CreateLogger<OracleRepositoryAdapter>() ?? throw new ArgumentNullException(nameof(loggerFactory));
+            _config = config;
+            _logger = logger;
         }
 
         /*NOVO*/
@@ -74,7 +73,6 @@ namespace Brunsker.Integracao.OracleAdapter
             }
             return preEntradas;
         }
-
         public async Task<IEnumerable<PreLancamento>> SelectLancamento()
         {
             IEnumerable<PreLancamento> lancamentos = null;
@@ -225,39 +223,41 @@ namespace Brunsker.Integracao.OracleAdapter
         }
         public async Task<List<Message>> PCPRODFILIALAsync(List<Message> pcprodfiliais, string package)
         {
-
-            using OracleConnection conn = new OracleConnection(_config.Connection.ConnectionString);
-
-            if (conn.State == ConnectionState.Closed)
+            if (pcprodfiliais.Any())
             {
-                conn.Open();
-            }
+                using OracleConnection conn = new OracleConnection(_config.Connection.ConnectionString);
 
-            foreach (var item in pcprodfiliais)
-            {
-                try
+                if (conn.State == ConnectionState.Closed)
                 {
-                    var pcprodfillial = JsonConvert.DeserializeObject<PCPRODFILIAL>(item.Content);
-
-                    OracleDynamicParameters dynamicParameters = new OracleDynamicParameters();
-
-                    dynamicParameters.Add("pCODFILIAL", pcprodfillial.CODFILIAL);
-                    dynamicParameters.Add("pCODPROD", pcprodfillial.CODPROD);
-                    dynamicParameters.Add("pPROIBIDAVENDA", pcprodfillial.PROIBIDAVENDA);
-                    dynamicParameters.Add("pFORALINHA", pcprodfillial.FORALINHA);
-                    dynamicParameters.Add("pORIGMERCTRIB", pcprodfillial.ORIGMERCTRIB);
-                    dynamicParameters.Add("pSEQ_CLIENTE", pcprodfillial.SEQ_CLIENTE);
-
-                    await conn.QueryAsync(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
-
-                    pcprodfiliais.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = true);
-
+                    conn.Open();
                 }
-                catch (Exception e)
-                {
-                    _logger.LogError(e.Message);
 
-                    pcprodfiliais.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = false);
+                foreach (var item in pcprodfiliais)
+                {
+                    try
+                    {
+                        var pcprodfillial = JsonConvert.DeserializeObject<PCPRODFILIAL>(item.Content);
+
+                        OracleDynamicParameters dynamicParameters = new OracleDynamicParameters();
+
+                        dynamicParameters.Add("pCODFILIAL", pcprodfillial.CODFILIAL);
+                        dynamicParameters.Add("pCODPROD", pcprodfillial.CODPROD);
+                        dynamicParameters.Add("pPROIBIDAVENDA", pcprodfillial.PROIBIDAVENDA);
+                        dynamicParameters.Add("pFORALINHA", pcprodfillial.FORALINHA);
+                        dynamicParameters.Add("pORIGMERCTRIB", pcprodfillial.ORIGMERCTRIB);
+                        dynamicParameters.Add("pSEQ_CLIENTE", pcprodfillial.SEQ_CLIENTE);
+
+                        await conn.QueryAsync(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
+
+                        pcprodfiliais.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = true);
+
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError(e.Message);
+
+                        pcprodfiliais.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = false);
+                    }
                 }
             }
 
@@ -494,37 +494,40 @@ namespace Brunsker.Integracao.OracleAdapter
         }
         public async Task<List<Message>> PCCODFABRICA(List<Message> mensagens, string package)
         {
-            using (var conn = new OracleConnection(_config.Connection.ConnectionString))
+            if (mensagens.Any())
             {
-                if (conn.State == ConnectionState.Closed) conn.Open();
-
-                foreach (var item in mensagens)
+                using (var conn = new OracleConnection(_config.Connection.ConnectionString))
                 {
-                    try
+                    if (conn.State == ConnectionState.Closed) conn.Open();
+
+                    foreach (var item in mensagens)
                     {
-                        var pccodfabrica = JsonConvert.DeserializeObject<PCCODFABRICA>(item.Content);
+                        try
+                        {
+                            var pccodfabrica = JsonConvert.DeserializeObject<PCCODFABRICA>(item.Content);
 
-                        OracleDynamicParameters dynamicParameters = new OracleDynamicParameters();
+                            OracleDynamicParameters dynamicParameters = new OracleDynamicParameters();
 
-                        dynamicParameters.Add("pROWID", pccodfabrica.ROWID_TB);
-                        dynamicParameters.Add("pSEQ_CLIENTE", pccodfabrica.SEQ_CLIENTE);
-                        dynamicParameters.Add("pCODPROD", pccodfabrica.CODPROD);
-                        dynamicParameters.Add("pCODFORNEC", pccodfabrica.CODFORNEC);
-                        dynamicParameters.Add("pCODFAB", pccodfabrica.CODFAB);
-                        dynamicParameters.Add("pFATOR", pccodfabrica.FATOR);
-                        dynamicParameters.Add("pSTRING_BANCO", pccodfabrica.STRING_BANCO);
-                        dynamicParameters.Add("pDTINSERT", pccodfabrica.DT_INSERT);
+                            dynamicParameters.Add("pROWID", pccodfabrica.ROWID_TB);
+                            dynamicParameters.Add("pSEQ_CLIENTE", pccodfabrica.SEQ_CLIENTE);
+                            dynamicParameters.Add("pCODPROD", pccodfabrica.CODPROD);
+                            dynamicParameters.Add("pCODFORNEC", pccodfabrica.CODFORNEC);
+                            dynamicParameters.Add("pCODFAB", pccodfabrica.CODFAB);
+                            dynamicParameters.Add("pFATOR", pccodfabrica.FATOR);
+                            dynamicParameters.Add("pSTRING_BANCO", pccodfabrica.STRING_BANCO);
+                            dynamicParameters.Add("pDTINSERT", pccodfabrica.DT_INSERT);
 
-                        await conn.ExecuteAsync(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
+                            await conn.ExecuteAsync(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
 
-                        mensagens.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = true);
+                            mensagens.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = true);
 
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.LogError(e.Message);
+                        }
+                        catch (Exception e)
+                        {
+                            _logger.LogError(e.Message);
 
-                        mensagens.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = false);
+                            mensagens.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = false);
+                        }
                     }
                 }
             }
@@ -792,8 +795,8 @@ namespace Brunsker.Integracao.OracleAdapter
                     dynamicParameters.Add("pPERCALIQEXT", i.PERCALIQEXT);
                     dynamicParameters.Add("pPERCALIQEXTGUIA", i.PERCALIQEXTGUIA);
                     dynamicParameters.Add("pPERCREDICMS", i.PERCREDICMS);
-                    dynamicParameters.Add("pPERPIS", i.PERCREDICMS);
-                    dynamicParameters.Add("pPERCOFINS", i.PERCREDICMS);
+                    dynamicParameters.Add("pPERPIS", i.PERPIS);
+                    dynamicParameters.Add("pPERCOFINS", i.PERCOFINS);
                     dynamicParameters.Add("pSTRING_BANCO", i.STRING_BANCO);
                     dynamicParameters.Add("pDTINSERT", i.DT_INSERT);
                     dynamicParameters.Add("pMULTIPLOCOMPRAS", i.MULTIPLOCOMPRAS);
@@ -1004,6 +1007,7 @@ namespace Brunsker.Integracao.OracleAdapter
                     dynamicParameters.Add("pSERIE", nfs.SERIE);
                     dynamicParameters.Add("pDTSAIDA", nfs.DTSAIDA);
                     dynamicParameters.Add("pVLTOTAL", nfs.VLTOTAL);
+                    dynamicParameters.Add("pVLBONIFIC", nfs.VLBONIFIC);
                     dynamicParameters.Add("pCODCLI", nfs.CODCLI);
                     dynamicParameters.Add("pNUMTRANSVENDA", nfs.NUMTRANSVENDA);
                     dynamicParameters.Add("pCHAVENFE", nfs.CHAVENFE);
