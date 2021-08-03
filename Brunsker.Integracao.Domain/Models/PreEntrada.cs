@@ -59,5 +59,6 @@ namespace Brunsker.Integracao.Domain.Models
         public decimal PERPIS { get; set; }
         public decimal ST { get; set; }
         public string CONVERTERUNIDADE { get; set; }
+        public decimal CODFISCAL { get; set; }
     }
 }
