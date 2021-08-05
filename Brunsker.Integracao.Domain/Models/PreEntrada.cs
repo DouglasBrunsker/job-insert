@@ -60,5 +60,7 @@ namespace Brunsker.Integracao.Domain.Models
         public decimal ST { get; set; }
         public string CONVERTERUNIDADE { get; set; }
         public decimal CODFISCAL { get; set; }
+        public string UCOM { get; set; }
+        public string UTRIB { get; set; }
     }
 }
