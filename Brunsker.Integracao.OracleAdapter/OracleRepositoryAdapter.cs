@@ -1249,6 +1249,7 @@ namespace Brunsker.Integracao.OracleAdapter
                     dynamicParameters.Add("pPRAZOENTREGA", f.PRAZOENTREGA);
                     dynamicParameters.Add("pCODFORNECPRINC", f.CODFORNECPRINC);
                     dynamicParameters.Add("pCODCONTAB", f.CODCONTAB);
+                    dynamicParameters.Add("pCEP", f.CEP);
                     dynamicParameters.Add("pSEQ_CLIENTE", f.SEQ_CLIENTE);
                     dynamicParameters.Add("pSTRING_BANCO", f.STRING_BANCO);
 
