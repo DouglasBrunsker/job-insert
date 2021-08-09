@@ -13,5 +13,6 @@
         public string BLOQUEIO { get; set; }
         public long CODFORNECPRINC { get; set; }
         public string CODCONTAB { get; set; }
+        public string CEP { get; set; }
     }
 }
