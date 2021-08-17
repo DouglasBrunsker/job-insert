@@ -8,6 +8,7 @@ namespace Brunsker.Integracao.Domain.Models
         public string CODFAB { get; set; }
         public string CODFORNEC { get; set; }
         public double QT { get; set; }
+        public double QTCOM { get; set; }
         public double PUNIT { get; set; }
         public string TIPOMOVIMENTACAO { get; set; }
         public string PRECOULTIMAENTRADA { get; set; }
