@@ -798,8 +798,9 @@ namespace Brunsker.Integracao.OracleAdapter
                     dynamicParameters.Add("pPERPIS", i.PERPIS);
                     dynamicParameters.Add("pPERCOFINS", i.PERCOFINS);
                     dynamicParameters.Add("pSTRING_BANCO", i.STRING_BANCO);
-                    dynamicParameters.Add("pDTINSERT", i.DT_INSERT);
                     dynamicParameters.Add("pMULTIPLOCOMPRAS", i.MULTIPLOCOMPRAS);
+
+                    if (package != ("pkg_webserv_update_bsnotas.PROC_UPD_PCITEM")) dynamicParameters.Add("pDTINSERT", i.DT_INSERT);
 
                     await conn.QueryAsync(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
 
