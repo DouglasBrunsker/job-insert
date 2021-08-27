@@ -38,6 +38,7 @@ namespace Brunsker.Integracao.Domain.Models
         public DateTime DTEMISSAO { get; set; }
         public double VLTOTALFRETECIF { get; set; }
         public double VLTOTALDESCONTO { get; set; }
+        public double VLTOTDESCONTO { get; set; }
         public double VLTOTALNF { get; set; }
         public double VLTOTIPI { get; set; }
         public string OBS { get; set; }
