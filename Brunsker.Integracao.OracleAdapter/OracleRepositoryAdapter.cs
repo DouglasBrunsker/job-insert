@@ -817,6 +817,38 @@ namespace Brunsker.Integracao.OracleAdapter
 
             return itensJson;
         }
+        public async Task<List<Message>> DelItemAsync(List<Message> itensJson, string package)
+        {
+            using OracleConnection conn = new OracleConnection(_config.Connection.ConnectionString);
+
+            if (conn.State == ConnectionState.Closed) conn.Open();
+
+            foreach (var item in itensJson)
+            {
+                try
+                {
+                    var i = JsonConvert.DeserializeObject<Item>(item.Content);
+
+                    OracleDynamicParameters dynamicParameters = new OracleDynamicParameters();
+
+                    dynamicParameters.Add("pROWID", i.ROWID_TB);
+                    dynamicParameters.Add("pSEQ_CLIENTE", i.SEQ_CLIENTE);
+                    dynamicParameters.Add("pSTRING_BANCO", i.STRING_BANCO);
+
+                    await conn.QueryAsync(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
+
+                    itensJson.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = true);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e.Message);
+
+                    itensJson.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = false);
+                }
+            }
+
+            return itensJson;
+        }
         public async Task<List<Message>> LancamentoAsync(List<Message> lancamentosJson, string package)
         {
             using OracleConnection conn = new OracleConnection(_config.Connection.ConnectionString);
@@ -1062,6 +1094,38 @@ namespace Brunsker.Integracao.OracleAdapter
                     dynamicParameters.Add("pDTEMISSAO", ped.DATAEMISSAO);
                     dynamicParameters.Add("pVLTOTAL", ped.VLTOTAL);
                     dynamicParameters.Add("pDTFATUR", ped.DTFATUR);
+                    dynamicParameters.Add("pSTRING_BANCO", ped.STRING_BANCO);
+
+                    await conn.QueryAsync(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
+
+                    pedidosJson.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = true);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e.Message);
+
+                    pedidosJson.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = false);
+                }
+            }
+
+            return pedidosJson;
+        }
+        public async Task<List<Message>> DelPedidoAsync(List<Message> pedidosJson, string package)
+        {
+            using OracleConnection conn = new OracleConnection(_config.Connection.ConnectionString);
+
+            if (conn.State == ConnectionState.Closed) conn.Open();
+
+            foreach (var item in pedidosJson)
+            {
+                try
+                {
+                    var ped = JsonConvert.DeserializeObject<Pedido>(item.Content);
+
+                    OracleDynamicParameters dynamicParameters = new OracleDynamicParameters();
+
+                    dynamicParameters.Add("pROWID", ped.ROWID_TB);
+                    dynamicParameters.Add("pSEQ_CLIENTE", ped.SEQ_CLIENTE);
                     dynamicParameters.Add("pSTRING_BANCO", ped.STRING_BANCO);
 
                     await conn.QueryAsync(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);

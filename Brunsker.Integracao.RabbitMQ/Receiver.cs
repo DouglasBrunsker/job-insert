@@ -127,6 +127,10 @@ namespace Brunsker.Integracao.RabbitMQ
                             case Contexto.Integracao_AtualizarItem:
                                 retornoExecucao = await _oracleRepositoryAdapter.ItemAsync(mensagens, "pkg_webserv_update_bsnotas.PROC_UPD_PCITEM");
                                 break;
+                            
+                            case Contexto.Integracao_DelItem:
+                                retornoExecucao = await _oracleRepositoryAdapter.DelItemAsync(mensagens, "pkg_webserv_insert_bsnotas.PROC_DEL_PCITEM");
+                                break;
 
                             case Contexto.Integracao_Lancamento:
                                 retornoExecucao = await _oracleRepositoryAdapter.LancamentoAsync(mensagens, "pkg_webserv_insert_bsnotas.PROC_INS_PCLANC");
@@ -169,6 +173,10 @@ namespace Brunsker.Integracao.RabbitMQ
 
                             case Contexto.Integracao_AtualizarPedido:
                                 retornoExecucao = await _oracleRepositoryAdapter.PedidoAsync(mensagens, "pkg_webserv_update_bsnotas.PROC_UPD_PCPEDIDO");
+                                break;
+
+                            case Contexto.Integracao_DelPedido:
+                                retornoExecucao = await _oracleRepositoryAdapter.DelPedidoAsync(mensagens, "pkg_webserv_insert_bsnotas.PROC_DEL_PCPEDIDO");
                                 break;
 
                             case Contexto.Integracao_Prest:

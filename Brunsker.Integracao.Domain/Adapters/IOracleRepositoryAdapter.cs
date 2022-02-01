@@ -26,6 +26,8 @@ namespace Brunsker.Integracao.Domain.Adapters
         Task<IEnumerable<ConsultaCliente>> SelectConsultaCliente();
         Task ConfirmaEnvioDadosApi(ConsultaCliente consulta, string sql);
         Task<List<Message>> PCESTCOM(List<Message> mensagens, string package);
+        Task<List<Message>> DelPedidoAsync(List<Message> pedidosJson, string package);
+        Task<List<Message>> DelItemAsync(List<Message> itemsJson, string package);
 
         /*END NOVO*/
 
