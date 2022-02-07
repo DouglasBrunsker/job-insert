@@ -89,6 +89,8 @@ namespace Brunsker.Integracao.Application
 
             await ProcessamentoItens();
 
+            await ProcessamentoDelItens();
+
             await ProcessamentoMovimentacoes();
 
             await ProcessamentoNotasFiscaisEntrada();
@@ -269,6 +271,10 @@ namespace Brunsker.Integracao.Application
             await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_Item);
 
             await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizarItem);
+        }
+        private async Task ProcessamentoDelItens()
+        {
+            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_DelItem);
         }
         private async Task ProcessamentoLancamentos()
         {

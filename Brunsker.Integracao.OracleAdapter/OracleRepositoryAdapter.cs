@@ -831,8 +831,10 @@ namespace Brunsker.Integracao.OracleAdapter
 
                     OracleDynamicParameters dynamicParameters = new OracleDynamicParameters();
 
-                    dynamicParameters.Add("pROWID", i.ROWID_TB);
                     dynamicParameters.Add("pSEQ_CLIENTE", i.SEQ_CLIENTE);
+                    dynamicParameters.Add("pNUMPED", i.NUMSEQ);
+                    dynamicParameters.Add("pCODPROD", i.CODPROD);
+                    dynamicParameters.Add("pNUMSEQ", i.NUMSEQ);
                     dynamicParameters.Add("pSTRING_BANCO", i.STRING_BANCO);
 
                     await conn.QueryAsync(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
