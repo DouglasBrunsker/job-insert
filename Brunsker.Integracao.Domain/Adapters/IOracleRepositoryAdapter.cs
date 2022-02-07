@@ -28,6 +28,7 @@ namespace Brunsker.Integracao.Domain.Adapters
         Task<List<Message>> PCESTCOM(List<Message> mensagens, string package);
         Task<List<Message>> DelPedidoAsync(List<Message> pedidosJson, string package);
         Task<List<Message>> DelItemAsync(List<Message> itemsJson, string package);
+        Task<IEnumerable<BuscaXML>> SelectFaltaXml();
 
         /*END NOVO*/
 

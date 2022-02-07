@@ -15,5 +15,8 @@ namespace Brunsker.Integracao.Domain.Services
 
         [Post("/api/Integracao/v1/EnviarStatusCliente")]
         Task EnviarStatusCliente(DtoParametro dados);
+
+        [Post("/api/Integracao/v1/EnviarBuscaXML")]
+        Task EnviarBuscaXMLAsync(DtoParametro dados);
     }
 }

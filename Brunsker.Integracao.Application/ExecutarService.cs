@@ -35,6 +35,10 @@ namespace Brunsker.Integracao.Application
 
             _logger.LogInformation("Inicio da execucao de processamento, :" + " " + DateTime.Now);
 
+            await ProcessamentoXMLFalta();
+
+            await ProcessamentoXml();
+            
             await ProcessamentoPCNFBASEENT();
 
             await ProcessamentoPCESTCOM();
@@ -79,7 +83,7 @@ namespace Brunsker.Integracao.Application
 
             await ProcessamentoFiliais();
 
-            await ProcessamentoXml();
+            
 
             await ProcessamentoLancamentos();
 
@@ -94,6 +98,8 @@ namespace Brunsker.Integracao.Application
             await ProcessamentoNotasFiscaisEntrada();
 
             await ProcessamentoPrest();
+
+            
 
             _logger.LogInformation("Fim da execucao de processamento, :" + " " + DateTime.Now + "TempoExecucao:" + " " + sw.Elapsed.TotalMinutes + "Minutos");
 
@@ -317,6 +323,25 @@ namespace Brunsker.Integracao.Application
             await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_Produto);
 
             await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizarProduto);
+        }
+        private async Task ProcessamentoXMLFalta()
+        {
+            try
+            {
+                var xmls = await _rep.SelectFaltaXml();
+
+                if (xmls.Any())
+                {
+                    foreach (var xml in xmls)
+                    {
+                        await _refit.EnviarBuscaXMLAsync(new DtoParametro { dados = JsonConvert.SerializeObject(xml) });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
         }
     }
 }

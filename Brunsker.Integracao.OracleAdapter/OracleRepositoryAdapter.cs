@@ -1378,6 +1378,30 @@ namespace Brunsker.Integracao.OracleAdapter
             return xmlJson;
         }
 
+        public async Task<IEnumerable<BuscaXML>> SelectFaltaXml()
+        {
+            IEnumerable<BuscaXML> xmls = null;
+
+            try
+            {
+                string sql = "pkg_webserv_insert_bsnotas.SELECT_FALTA_XML";
+
+                using OracleConnection conn = new OracleConnection(_config.Connection.ConnectionString);
+
+                if (conn.State == ConnectionState.Closed) conn.Open();
+
+                var parameters = new OracleDynamicParameters();
+
+                parameters.Add("CUR_OUT", dbType: OracleMappingType.RefCursor, direction: ParameterDirection.Output);
+
+                xmls = await conn.QueryAsync<BuscaXML>(sql, parameters, commandType: CommandType.StoredProcedure);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
+            return xmls;
+        }
     }
 }
 
