@@ -65,5 +65,6 @@ namespace Brunsker.Integracao.Domain.Models
         public string UCOM { get; set; }
         public string UTRIB { get; set; }
         public string TIPOFRETE { get; set; }
+        public long NUMSEQ { get; set; }
     }
 }
