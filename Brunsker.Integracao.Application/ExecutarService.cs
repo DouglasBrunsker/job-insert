@@ -341,6 +341,8 @@ namespace Brunsker.Integracao.Application
                     foreach (var xml in xmls)
                     {
                         await _refit.EnviarBuscaXMLAsync(new DtoParametro { dados = JsonConvert.SerializeObject(xml) });
+
+                        await _rep.ConfirmaEnvioDadosApi(xml.SEQ_CLIENTE, xml.ROWID, "pkg_webserv_insert_bsnotas.SELECT_FALTA_XML_OK");
                     }
                 }
             }
