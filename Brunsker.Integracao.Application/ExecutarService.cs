@@ -34,11 +34,9 @@ namespace Brunsker.Integracao.Application
             sw.Start();
 
             _logger.LogInformation("Inicio da execucao de processamento, :" + " " + DateTime.Now);
-
-            await ProcessamentoXMLFalta();
-
-            await ProcessamentoXml();
             
+            await ProcessamentoPCDOCELETRONICO();
+
             await ProcessamentoPCNFBASEENT();
 
             await ProcessamentoPCESTCOM();
@@ -83,8 +81,6 @@ namespace Brunsker.Integracao.Application
 
             await ProcessamentoFiliais();
 
-            
-
             await ProcessamentoLancamentos();
 
             await ProcessamentoClientes();
@@ -101,6 +97,9 @@ namespace Brunsker.Integracao.Application
 
             await ProcessamentoPrest();
 
+            await ProcessamentoXMLFalta();
+
+            await ProcessamentoXml();
             
 
             _logger.LogInformation("Fim da execucao de processamento, :" + " " + DateTime.Now + "TempoExecucao:" + " " + sw.Elapsed.TotalMinutes + "Minutos");
@@ -350,6 +349,10 @@ namespace Brunsker.Integracao.Application
             {
                 _logger.LogError(ex.Message);
             }
+        }
+        private async Task ProcessamentoPCDOCELETRONICO()
+        {
+            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCDOCELETRONICO);
         }
     }
 }

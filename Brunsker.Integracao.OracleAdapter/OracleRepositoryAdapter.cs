@@ -1404,6 +1404,44 @@ namespace Brunsker.Integracao.OracleAdapter
             }
             return xmls;
         }
+
+        public async Task<List<Message>> DocEletronicoAsync(List<Message> docEletronicoJson, string package)
+        {
+            using OracleConnection conn = new OracleConnection(_config.Connection.ConnectionString);
+
+            if (conn.State == ConnectionState.Closed) conn.Open();
+
+            foreach (var item in docEletronicoJson)
+            {
+                try
+                {
+                    var doc = JsonConvert.DeserializeObject<PCDOCELETRONICO>(item.Content);
+
+                    OracleDynamicParameters dynamicParameters = new OracleDynamicParameters();
+
+                    dynamicParameters.Add("pROWID", doc.ROWID_TB);
+                    dynamicParameters.Add("pNUMTRANSACAO", doc.NUMTRANSACAO);
+                    dynamicParameters.Add("pMOVIMENTO", doc.MOVIMENTO);
+                    dynamicParameters.Add("pXMLNFE", doc.XMLNFE);
+                    dynamicParameters.Add("pDTDC", doc.DTDC);
+                    dynamicParameters.Add("pDT_INSERT", doc.DT_INSERT);
+                    dynamicParameters.Add("pSEQ_CLIENTE", doc.SEQ_CLIENTE);
+                    dynamicParameters.Add("pSTRING_BANCO", doc.STRING_BANCO);
+
+                    await conn.QueryAsync(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
+
+                    docEletronicoJson.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = true);
+
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e.Message);
+
+                    docEletronicoJson.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = false);
+                }
+            }
+            return docEletronicoJson;
+        }
     }
 }
 

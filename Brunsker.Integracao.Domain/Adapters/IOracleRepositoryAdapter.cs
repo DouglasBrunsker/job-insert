@@ -172,5 +172,7 @@ namespace Brunsker.Integracao.Domain.Adapters
 
         Task<List<Message>> XmlAsync(List<Message> xml, string package);
 
+        Task<List<Message>> DocEletronicoAsync(List<Message> docEletronico, string package);
+
     }
 }

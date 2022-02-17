@@ -69,6 +69,7 @@
         Integracao_AtualizacaoPCPARCELASC,
         Integracao_PCCONSUM,
         Integracao_AtualizacaoPCCONSUM,
+        Integracao_PCDOCELETRONICO,
 
         /*end novos*/
     }

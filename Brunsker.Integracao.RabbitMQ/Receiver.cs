@@ -198,7 +198,10 @@ namespace Brunsker.Integracao.RabbitMQ
                             case Contexto.Integracao_Xml:
                                 retornoExecucao = await _oracleRepositoryAdapter.XmlAsync(mensagens, "pkg_webserv_insert_bsnotas.INSERT_XML");
                                 break;
-
+                            
+                            case Contexto.Integracao_PCDOCELETRONICO:
+                                retornoExecucao = await _oracleRepositoryAdapter.DocEletronicoAsync(mensagens, "pkg_webserv_insert_bsnotas.PROC_INS_PCDOCELETRONICO");
+                                break;
                             /*NOVO*/
 
                             case Contexto.Integracao_PCCFO:
