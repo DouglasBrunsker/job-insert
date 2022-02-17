@@ -1423,6 +1423,7 @@ namespace Brunsker.Integracao.OracleAdapter
                     dynamicParameters.Add("pNUMTRANSACAO", doc.NUMTRANSACAO);
                     dynamicParameters.Add("pMOVIMENTO", doc.MOVIMENTO);
                     dynamicParameters.Add("pXMLNFE", doc.XMLNFE);
+                    dynamicParameters.Add("pXMLNFCE", doc.XMLNFCE);
                     dynamicParameters.Add("pDTDC", doc.DTDC);
                     dynamicParameters.Add("pDT_INSERT", doc.DT_INSERT);
                     dynamicParameters.Add("pSEQ_CLIENTE", doc.SEQ_CLIENTE);
