@@ -832,7 +832,7 @@ namespace Brunsker.Integracao.OracleAdapter
                     OracleDynamicParameters dynamicParameters = new OracleDynamicParameters();
 
                     dynamicParameters.Add("pSEQ_CLIENTE", i.SEQ_CLIENTE);
-                    dynamicParameters.Add("pNUMPED", i.NUMSEQ);
+                    dynamicParameters.Add("pNUMPED", i.NUMPED);
                     dynamicParameters.Add("pCODPROD", i.CODPROD);
                     dynamicParameters.Add("pNUMSEQ", i.NUMSEQ);
                     dynamicParameters.Add("pSTRING_BANCO", i.STRING_BANCO);

@@ -34,12 +34,16 @@ namespace Brunsker.Integracao.Application
             sw.Start();
 
             _logger.LogInformation("Inicio da execucao de processamento, :" + " " + DateTime.Now);
-            
+
             await ProcessamentoPCDOCELETRONICO();
 
             await ProcessamentoPCNFBASEENT();
 
             await ProcessamentoPCESTCOM();
+
+            await ProcessamentoDelPedido();
+
+            await ProcessamentoDelItens();
 
             await ProcessamentoNotasFiscaisSaida();
 
@@ -88,8 +92,6 @@ namespace Brunsker.Integracao.Application
             await ProcessamentoDepartamentos();
 
             await ProcessamentoItens();
-
-            await ProcessamentoDelItens();
 
             await ProcessamentoMovimentacoes();
 
@@ -316,6 +318,10 @@ namespace Brunsker.Integracao.Application
             await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_Pedido);
 
             await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizarPedido);
+        }
+        private async Task ProcessamentoDelPedido()
+        {
+            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_DelPedido);
         }
         private async Task ProcessamentoPrest()
         {
