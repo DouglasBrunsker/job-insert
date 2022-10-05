@@ -70,6 +70,7 @@
         Integracao_PCCONSUM,
         Integracao_AtualizacaoPCCONSUM,
         Integracao_PCDOCELETRONICO,
+        Integracao_TESTES,
 
         /*end novos*/
     }

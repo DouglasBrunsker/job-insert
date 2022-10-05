@@ -5,6 +5,7 @@ namespace Brunsker.Integracao.Domain.Adapters
 {
     public interface IRabbitMqAdapter
     {
-        Task ReceiverMessageAsync(Contexto contexto);
+
+        byte[] RecieveMessageRabbitAsync();
     }
 }

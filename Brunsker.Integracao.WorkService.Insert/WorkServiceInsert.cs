@@ -24,7 +24,7 @@ namespace Brunsker.Integracao.WorkService.Insert
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(Callback, null, 2000, Timeout.Infinite);
+            //_timer = new Timer(Callback, null, 2000, Timeout.Infinite);
 
             return Task.CompletedTask;
         }

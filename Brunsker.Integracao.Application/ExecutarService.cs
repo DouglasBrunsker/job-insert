@@ -3,9 +3,12 @@ using Brunsker.Integracao.Domain.Models;
 using Brunsker.Integracao.Domain.Services;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Brunsker.Integracao.Application
@@ -34,331 +37,66 @@ namespace Brunsker.Integracao.Application
             sw.Start();
 
             _logger.LogInformation("Inicio da execucao de processamento, :" + " " + DateTime.Now);
+         
+            var msg = _rabbitMqAdapter.RecieveMessageRabbitAsync();
 
-            await ProcessamentoPCDOCELETRONICO();
-
-            await ProcessamentoPCNFBASEENT();
-
-            await ProcessamentoPCESTCOM();
-
-            await ProcessamentoDelPedido();
-
-            await ProcessamentoDelItens();
-
-            await ProcessamentoNotasFiscaisSaida();
-
-            await ProcessamentoPCCONTAS();
-
-            await ProcessamentoConsultaClienteSefaz();
-
-            await ProcessamentoNotasFiscaisPreEntrada();
-
-            await ProcessamentoFornecedores();
-
-            await ProcessamentoPreEntrada();
-
-            await ProcessamentoPreLancamento();
-
-            await ProcessamentoPCPARCELASC();
-
-            await ProcessamentoPCCONSUM();
-
-            await ProcessamentoPCCODFABRICA();
-
-            await ProcessamentoProdutos();
-
-            await ProcessamentoPedidos();
-
-            await ProcessamentoPCTABPR();
-
-            await ProcessamentoPCEST();
-
-            await ProcessamentoPCCFO();
-
-            await ProcessamentoPCNEGFORNEC();
-
-            await ProcessamentoPCPRODFILIAL();
-
-            await ProcessamentoPCTABTRIBENT();
-
-            await ProcessamentoPCTRIBENTRADA();
-
-            await ProcessamentoFiliais();
-
-            await ProcessamentoLancamentos();
-
-            await ProcessamentoClientes();
-
-            await ProcessamentoDepartamentos();
-
-            await ProcessamentoItens();
-
-            await ProcessamentoMovimentacoes();
-
-            await ProcessamentoNotasFiscaisEntrada();
-
-            await ProcessamentoPrest();
-
-            await ProcessamentoXMLFalta();
-
-            await ProcessamentoXml();
-            
+           var t = Encoding.UTF8.GetString(msg);
 
             _logger.LogInformation("Fim da execucao de processamento, :" + " " + DateTime.Now + "TempoExecucao:" + " " + sw.Elapsed.TotalMinutes + "Minutos");
 
             sw.Stop();
         }
-        private async Task ProcessamentoPCESTCOM()
+        private byte[] RecieveMessageRabbitAsync()
         {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCESTCOM);
-        }
-        private async Task ProcessamentoPCNFBASEENT()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCNFBASEENT);
-        }
-        private async Task ProcessamentoPCCONTAS()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCCONTAS);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizacaoPCCONTAS);
-        }
-        private async Task ProcessamentoPCCONSUM()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCCONSUM);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizacaoPCCONSUM);
-        }
-        private async Task ProcessamentoPCPARCELASC()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCPARCELASC);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizacaoPCPARCELASC);
-        }
-        private async Task ProcessamentoPCCODFABRICA()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCCODFABRICA);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizacaoPCCODFABRICA);
-        }
-        private async Task ProcessamentoPCEST()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCEST);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizacaoPCEST);
-        }
-        private async Task ProcessamentoPCCFO()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCCFO);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizacaoPCCFO);
-        }
-        private async Task ProcessamentoPCNEGFORNEC()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCNEGFORNEC);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizacaoPCNEGFORNEC);
-        }
-        private async Task ProcessamentoPCPRODFILIAL()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCPRODFILIAL);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizacaoPCPRODFILIAL);
-        }
-        private async Task ProcessamentoPCTABPR()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCTABPR);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizacaoPCTABPR);
-        }
-        private async Task ProcessamentoPCTABTRIBENT()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCTABTRIBENT);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizacaoPCTABTRIBENT);
-        }
-        private async Task ProcessamentoPCTRIBENTRADA()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCTRIBENTRADA);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizacaoPCTRIBENTRADA);
-        }
-        private async Task ProcessamentoConsultaClienteSefaz()
-        {
+            byte[] mensagens = null;
             try
             {
-                var consultas = await _rep.SelectConsultaCliente();
+                EventingBasicConsumer consumer = null;
+                string[] filas = new string[] { "Testes", "Testes2", "Testes3", "Testes4", "Testes5" };
+                var factory = new ConnectionFactory() { HostName = "168.138.250.55", UserName = "brunsker", Password = "brunsker$2020" };
 
-                if (consultas.Any())
+                var _connection = factory.CreateConnection();
+
+                var channel = _connection.CreateModel();
+                consumer = new EventingBasicConsumer(channel);
+
+                consumer.Received += (model, ea) =>
                 {
-                    foreach (var consulta in consultas)
-                    {
-                        await _refit.EnviarStatusCliente(new DtoParametro { dados = JsonConvert.SerializeObject(consulta) });
+                    mensagens = ea.Body.ToArray();
 
-                        await _rep.ConfirmaEnvioDadosApi(consulta, "pkg_clientes_nfe.PROC_UPD_CLIENTE_ALETRADOS");
-                    }
-                }
+                };
+
+                channel.BasicConsume(queue: filas[0],
+                                        autoAck: true,
+                                        consumer: consumer);
+                channel.BasicConsume(queue: filas[1],
+                                        autoAck: true,
+                                        consumer: consumer);
+                channel.BasicConsume(queue: filas[2],
+                                       autoAck: true,
+                                       consumer: consumer);
+                channel.BasicConsume(queue: filas[3],
+                                       autoAck: true,
+                                       consumer: consumer);
+                channel.BasicConsume(queue: filas[4],
+                                       autoAck: true,
+                                       consumer: consumer);
+
+
+
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(e.InnerException.Message);
+
+
             }
-        }
-        private async Task ProcessamentoPreEntrada()
-        {
-            try
-            {
-                var preEntradas = await _rep.SelectPreEntrada();
 
-                if (preEntradas.Any())
-                {
-                    foreach (var preEntrada in preEntradas)
-                    {
-                        await _refit.EnviarPreEntradaAsync(new DtoParametro { dados = JsonConvert.SerializeObject(preEntrada) });
+            return mensagens;
+        }
 
-                        await _rep.ConfirmaEnvioDadosApi(preEntrada.SEQ_CLIENTE, preEntrada.ROWID_TB, "pkg_pre_entrada.PROC_OK_PCMOVPREENT");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-            }
-        }
-        private async Task ProcessamentoPreLancamento()
-        {
-            try
-            {
-                var preLancamentos = await _rep.SelectLancamento();
 
-                if (preLancamentos.Any())
-                {
-                    foreach (var preLancamento in preLancamentos)
-                    {
-                        await _refit.EnviarPreLancamentoAsync(new DtoParametro { dados = JsonConvert.SerializeObject(preLancamento) });
-
-                        await _rep.ConfirmaEnvioDadosApi(preLancamento.SEQ_CLIENTE, preLancamento.ROWID_TB, "pkg_pre_entrada.PROC_OK_PCLANCPREENT");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-            }
-        }
-        private async Task ProcessamentoXml()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_Xml);
-        }
-        private async Task ProcessamentoClientes()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_Clientes);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizarClientes);
-        }
-        private async Task ProcessamentoDepartamentos()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_Departamento);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizarDepartamento);
-        }
-        private async Task ProcessamentoFiliais()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_Filial);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizarFilial);
-        }
-        private async Task ProcessamentoFornecedores()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_Fornecedor);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizarFornecedor);
-        }
-        private async Task ProcessamentoItens()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_Item);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizarItem);
-        }
-        private async Task ProcessamentoDelItens()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_DelItem);
-        }
-        private async Task ProcessamentoLancamentos()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_Lancamento);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizarLancamento);
-        }
-        private async Task ProcessamentoMovimentacoes()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_Movimentacao);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizarMovimentacao);
-        }
-        private async Task ProcessamentoNotasFiscaisEntrada()
-        {
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_NotaFiscalEntrada);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizarNotaFiscalEntrada);
-        }
-        private async Task ProcessamentoNotasFiscaisPreEntrada()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_NotaFiscalPreEntrada);
-
-        }
-        private async Task ProcessamentoNotasFiscaisSaida()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_NotaFiscalSaida);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizarNotaFiscalSaida);
-        }
-        private async Task ProcessamentoPedidos()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_Pedido);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizarPedido);
-        }
-        private async Task ProcessamentoDelPedido()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_DelPedido);
-        }
-        private async Task ProcessamentoPrest()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_Prest);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizarPrest);
-        }
-        private async Task ProcessamentoProdutos()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_Produto);
-
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_AtualizarProduto);
-        }
-        private async Task ProcessamentoXMLFalta()
-        {
-            try
-            {
-                var xmls = await _rep.SelectFaltaXml();
-
-                if (xmls.Any())
-                {
-                    foreach (var xml in xmls)
-                    {
-                        await _refit.EnviarBuscaXMLAsync(new DtoParametro { dados = JsonConvert.SerializeObject(xml) });
-
-                        await _rep.ConfirmaEnvioDadosApi(xml.SEQ_CLIENTE, xml.ROWID, "pkg_webserv_insert_bsnotas.SELECT_FALTA_XML_OK");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-            }
-        }
-        private async Task ProcessamentoPCDOCELETRONICO()
-        {
-            await _rabbitMqAdapter.ReceiverMessageAsync(Contexto.Integracao_PCDOCELETRONICO);
-        }
     }
 }
+
+

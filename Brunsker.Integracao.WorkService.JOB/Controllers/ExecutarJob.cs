@@ -25,8 +25,9 @@ namespace Brunsker.Integracao.WorkService.JOB.Controllers
         public async Task StartAsync()
         {
             _logger.LogInformation("Inializando job, intervado de execução:  " + "Intervalo em milissegundos: {@tempo}", new { tempo = 60000 });
-
-            _timer = new Timer(Callback, null, 60000, Timeout.Infinite);
+            
+            await executarService.ExecutarProcessoAsync();
+            //_timer = new Timer(Callback, null, 60000, Timeout.Infinite);
 
             _logger.LogInformation("Job Iniciado com Sucesso  ", null);
 
