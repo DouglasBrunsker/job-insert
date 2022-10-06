@@ -39,19 +39,19 @@ namespace ConsoleTesteJobInsert
 
                 for (int i = 0; i < 50000; i++)
                 {
-                    body = Encoding.UTF8.GetBytes(nfe.Replace("teste2", $"teste2{i}"));
+                    body = Encoding.UTF8.GetBytes(nfe.Replace("teste2", $"teste{i}"));
                     channel.BasicPublish(exchange: "",
                                          routingKey: "Testes",
                                          basicProperties: null,
                                          body: body);
 
-                    body = Encoding.UTF8.GetBytes(nfs.Replace("teste2", $"teste2{i}"));
+                    body = Encoding.UTF8.GetBytes(nfs.Replace("4987996", $"{i}"));
                     channel.BasicPublish(exchange: "",
                                          routingKey: "Testes2",
                                          basicProperties: null,
                                          body: body);
 
-                    body = Encoding.UTF8.GetBytes(prod.Replace("teste2", $"teste2{i}"));
+                    body = Encoding.UTF8.GetBytes(prod.Replace("96934", $"{i}"));
                     channel.BasicPublish(exchange: "",
                                          routingKey: "Testes3",
                                          basicProperties: null,

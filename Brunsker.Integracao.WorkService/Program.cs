@@ -43,14 +43,14 @@ namespace Brunsker.Integracao.WorkService
                 var channel = _connection.CreateModel();
                 consumer = new EventingBasicConsumer(channel);
 
-                consumer.Received += (model, ea) =>
+                consumer.Received += async (model, ea) =>
                 {
                     var body = ea.Body.ToArray();
                     var fila = ea.RoutingKey.ToString();
 
                     var msg = Encoding.UTF8.GetString(body);
-
-                    //Triagem(msg, fila);
+                    
+                    Triagem(msg, fila);
                 };
 
                 channel.BasicConsume(queue: filas[0],
@@ -81,7 +81,7 @@ namespace Brunsker.Integracao.WorkService
         }
 
 
-        public static void Triagem(string msg, string fila)
+        public static async Task Triagem(string msg, string fila)
         {
             string package = "";
             switch (fila)
@@ -111,15 +111,13 @@ namespace Brunsker.Integracao.WorkService
                 //    NotaFiscalEntradaAsync(msg, package);
                 //    break;
 
-
-
                 default:
                     break;
             }
 
         }
 
-        public static void NotaFiscalEntradaAsync(string notasFiscaisEntradaJson, string package)
+        public static async Task NotaFiscalEntradaAsync(string notasFiscaisEntradaJson, string package)
         {
 
 
@@ -155,7 +153,7 @@ namespace Brunsker.Integracao.WorkService
                 dynamicParameters.Add("pDTENT", nf.DTENT);
 
 
-                conn.Execute(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
+                await conn.ExecuteAsync(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
 
                 //notasFiscaisEntradaJson.Where(x => x.DeliveryTag == notasFiscaisEntradaJson.DeliveryTag).ToList().ForEach(n => n.Executado = true);
 
@@ -170,7 +168,7 @@ namespace Brunsker.Integracao.WorkService
 
         }
 
-        public static void NotaFiscalSaidaAsync(string notasFiscaisSaidaJson, string package)
+        public static async Task NotaFiscalSaidaAsync(string notasFiscaisSaidaJson, string package)
         {
             using OracleConnection conn = new OracleConnection(conexao);
 
@@ -203,7 +201,7 @@ namespace Brunsker.Integracao.WorkService
                 dynamicParameters.Add("pSTRING_BANCO", nfs.STRING_BANCO);
 
 
-                conn.Execute(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
+                await conn.ExecuteAsync(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
 
                 //notasFiscaisSaidaJson.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = true);
 
@@ -217,7 +215,7 @@ namespace Brunsker.Integracao.WorkService
 
         }
 
-        public static void ProdutoAsync(string produtosJson, string package)
+        public static async Task ProdutoAsync(string produtosJson, string package)
         {
 
             using OracleConnection conn = new OracleConnection(conexao);
@@ -264,7 +262,7 @@ namespace Brunsker.Integracao.WorkService
                     dynamicParameters.Add("pDTINSERT", prod.DT_INSERT);
                 }
 
-                conn.Execute(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
+                await conn.ExecuteAsync(package, param: dynamicParameters, commandType: CommandType.StoredProcedure);
 
                 //produtosJson.Where(x => x.DeliveryTag == item.DeliveryTag).ToList().ForEach(n => n.Executado = true);
             }
