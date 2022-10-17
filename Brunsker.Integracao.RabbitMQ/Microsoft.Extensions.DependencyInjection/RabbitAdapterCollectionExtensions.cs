@@ -7,7 +7,7 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddRabbitAdapterConfiguration(this IServiceCollection services)
         {
-            services.AddTransient<IRabbitMqAdapter, Receiver>();
+            services.AddTransient<IRabbitMqAdapter, ReceiverTrigger>();
 
             return services;
         }

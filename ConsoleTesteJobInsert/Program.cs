@@ -1,4 +1,5 @@
-﻿using RabbitMQ.Client;
+﻿using Microsoft.Extensions.Configuration;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
 using System.IO;
@@ -13,18 +14,16 @@ namespace ConsoleTesteJobInsert
     {
         static async Task Main(string[] args)
         {
-
-            await ReceiverMessageRabbitAsync();
+            await PublishMessageRabbitAsync();
         }
 
-
-        public static async Task ReceiverMessageRabbitAsync()
+        public static async Task PublishMessageRabbitAsync()
         {
             try
             {
                 EventingBasicConsumer consumer = null;
-                string[] filas = new string[2] { "Testes", "Testes2" };
-                var factory = new ConnectionFactory() { HostName = "168.138.250.55", UserName = "brunsker", Password = "brunsker$2020" };
+                var factory = new ConnectionFactory() { HostName = "144.22.203.207", UserName = "admin", Password = "brunsker" };
+                var routingKey = "Producao";
 
                 var _connection = factory.CreateConnection();
                 var channel = _connection.CreateModel();
@@ -37,37 +36,31 @@ namespace ConsoleTesteJobInsert
 
                 byte[] body;
 
+                var properties = channel.CreateBasicProperties();
+                
                 for (int i = 0; i < 50000; i++)
                 {
+                    properties.Type = "Integracao_NotaFiscalEntrada";
                     body = Encoding.UTF8.GetBytes(nfe.Replace("teste2", $"teste{i}"));
                     channel.BasicPublish(exchange: "",
-                                         routingKey: "Testes",
-                                         basicProperties: null,
+                                         routingKey: routingKey,
+                                         basicProperties: properties,
                                          body: body);
 
+                    properties.Type = "Integracao_NotaFiscalSaida";
                     body = Encoding.UTF8.GetBytes(nfs.Replace("4987996", $"{i}"));
                     channel.BasicPublish(exchange: "",
-                                         routingKey: "Testes2",
-                                         basicProperties: null,
+                                         routingKey: routingKey,
+                                         basicProperties: properties,
                                          body: body);
 
+                    properties.Type = "Integracao_Produto";
                     body = Encoding.UTF8.GetBytes(prod.Replace("96934", $"{i}"));
                     channel.BasicPublish(exchange: "",
-                                         routingKey: "Testes3",
-                                         basicProperties: null,
+                                         routingKey: routingKey,
+                                         basicProperties: properties,
                                          body: body);
 
-                    //body = Encoding.UTF8.GetBytes(nfe.Replace("teste2", $"teste2{i}"));
-                    //channel.BasicPublish(exchange: "",
-                    //                     routingKey: "Testes4",
-                    //                     basicProperties: null,
-                    //                     body: body);
-
-                    //body = Encoding.UTF8.GetBytes(nfe.Replace("teste2", $"teste2{i}"));
-                    //channel.BasicPublish(exchange: "",
-                    //                     routingKey: "Testes5",
-                    //                     basicProperties: null,
-                    //                     body: body);
                     Thread.Sleep(1);
                 }
             }
@@ -77,5 +70,7 @@ namespace ConsoleTesteJobInsert
                 throw;
             }
         }
+
+
     }
 }
