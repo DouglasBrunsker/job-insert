@@ -27,11 +27,11 @@ namespace ConsoleTesteJobInsert
                 var _connection = factory.CreateConnection();
                 var channel = _connection.CreateModel();
 
-
                 string[] text = File.ReadAllLines(@"C:\Users\brunsker\Documents\teste.txt");
                 string nfe = text[0];
                 string nfs = text[1];
                 string prod = text[2];
+                string cliente = text[3];
 
                 byte[] body;
 
@@ -61,7 +61,7 @@ namespace ConsoleTesteJobInsert
                                          body: body);
 
                     properties.Type = "Integracao_Consulta_Cliente";
-                    body = Encoding.UTF8.GetBytes(prod.Replace("1286", $"{i}"));
+                    body = Encoding.UTF8.GetBytes(cliente.Replace("1286", $"{i}"));
                     channel.BasicPublish(exchange: "",
                                          routingKey: routingKey,
                                          basicProperties: properties,
