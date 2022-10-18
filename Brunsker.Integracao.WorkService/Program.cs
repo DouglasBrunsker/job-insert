@@ -24,9 +24,6 @@ namespace Brunsker.Integracao.WorkService
 
     internal class Program
     {
-        private static DbConnectionDbRepositoryAdapter _config;
-        
-
         static void Main(string[] args)
         {
 
@@ -40,8 +37,6 @@ namespace Brunsker.Integracao.WorkService
             ConfigRabbit rabbitConfig = config.GetRequiredSection("RabbitMQ").Get<ConfigRabbit>();
 
             ConsumirRabbitMQ rabbitMQ = new ConsumirRabbitMQ(rabbitConfig, conexao);
-
-            Console.ReadLine();
         }
         
 

@@ -1,6 +1,7 @@
 ﻿using Brunsker.Integracao.Domain.Models;
 using Dapper;
 using Dapper.Oracle;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Oracle.ManagedDataAccess.Client;
 using RabbitMQ.Client;
@@ -18,13 +19,15 @@ namespace Brunsker.Integracao.WorkService
     {
         private static ConfigRabbit _rabbit;
         private static string _connection;
+        private static readonly ILogger<ConsumirRabbitMQ> _logger;
+        private static List<FilaMorta> list = null;
 
-
+        //TODO apagar depois
         #region Testes. apagar dps
-        private const string WorkerExchange = "Producao.exchange";
-        private const string RetryExchange = "Fila Morta.exchange";
-        public const string WorkerQueue = "Producao";
-        private const string RetryQueue = "Fila Morta";
+        //private const string WorkerExchange = "Producao.exchange";
+        //private const string RetryExchange = "Fila Morta.exchange";
+        //public const string WorkerQueue = "Producao";
+        //private const string RetryQueue = "Fila Morta";
         #endregion
 
         public ConsumirRabbitMQ(ConfigRabbit rabbit, string connection)
@@ -38,7 +41,6 @@ namespace Brunsker.Integracao.WorkService
         {
             try
             {
-
                 EventingBasicConsumer consumer = null;
 
                 string queue = _rabbit.Queue;
@@ -50,17 +52,19 @@ namespace Brunsker.Integracao.WorkService
                     Password = _rabbit.Password
                 };
 
-
                 var _connection = factory.CreateConnection();
                 var channel = _connection.CreateModel();
 
                 consumer = new EventingBasicConsumer(channel);
-                channel.QueuePurge("Producao");
-                channel.QueuePurge("Fila Morta");
 
-
-
+                //TODO apagar depois
                 #region Teste apagar depois
+                //channel.QueuePurge("Producao");
+                //channel.QueuePurge("Fila Morta");
+                //channel.QueueDelete("Producao");
+                //channel.QueueDelete("Fila Morta");
+                //channel.ExchangeDelete("Producao.exchange");
+                //channel.ExchangeDelete("Fila Morta.exchange");
                 //channel.ExchangeDeclare(WorkerExchange, "direct", durable: true);
                 //channel.QueueDeclare
                 //(
@@ -68,22 +72,16 @@ namespace Brunsker.Integracao.WorkService
                 //    new Dictionary<string, object>
                 //    {
                 //        {"x-dead-letter-exchange", RetryExchange},
-
-                //        // I have tried with and without this next key
-                //        {"x-dead-letter-routing-key", RetryQueue}
+                //        //{"x-dead-letter-routing-key", RetryQueue}
                 //    }
                 //);
-                //channel.QueueBind(WorkerQueue, WorkerExchange, string.Empty, null);
 
-                ////channel.ExchangeDeclare(RetryExchange, "direct");
-                //channel.ExchangeDelete(RetryExchange);
                 //channel.ExchangeDeclare(RetryExchange, "fanout", durable: true);
                 //channel.QueueDeclare
                 //(
                 //    RetryQueue, true, false, false,
                 //    new Dictionary<string, object> {
-                //        { "x-dead-letter-exchange", WorkerExchange },
-                //        { "x-message-ttl", 30000 },
+                //        { "x-dead-letter-exchange", WorkerExchange }
                 //    }
                 //);
                 //channel.QueueBind(RetryQueue, RetryExchange, string.Empty, null);
@@ -97,7 +95,6 @@ namespace Brunsker.Integracao.WorkService
                 //    Thread.Sleep(1000);
                 //    Console.WriteLine("Rejected message");
 
-                //    // also tried  channel.BasicNack(ea.DeliveryTag, false, false);
                 //    channel.BasicReject(ea.DeliveryTag, false);
                 //};
 
@@ -108,12 +105,13 @@ namespace Brunsker.Integracao.WorkService
 
                 consumer.Received += async (model, ea) =>
                 {
-                    var header = ea.BasicProperties.Type;
+                    var type = ea.BasicProperties.Type;
                     var body = ea.Body.ToArray();
 
                     var msg = Encoding.UTF8.GetString(body);
 
-                    bool successful = await Sorting(msg, header);
+                    bool successful = await Sorting(msg, type);
+
                     if (successful)
                     {
                         channel.BasicAck(ea.DeliveryTag, false);
@@ -121,6 +119,12 @@ namespace Brunsker.Integracao.WorkService
                     else
                     {
                         channel.BasicReject(ea.DeliveryTag, false);
+                        list.Add(new FilaMorta
+                        {
+                            DateTime = DateTime.Now,
+                            Item = msg,
+                            Type = type
+                        });
                     }
                 };
                 channel.BasicConsume(queue: queue,
@@ -130,9 +134,11 @@ namespace Brunsker.Integracao.WorkService
             }
             catch (Exception e)
             {
-                // _logger.LogError(e.InnerException.Message);
+                //_logger.LogError(e.Message);
+                ConsoleColor cor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(e.Message);
-                throw;
+                Console.ForegroundColor = cor;
             }
 
             Console.ReadLine();
@@ -141,7 +147,7 @@ namespace Brunsker.Integracao.WorkService
 
         public static async Task<bool> Sorting(string msg, string type)
         {
-            bool successful = false;
+            bool successful;
             string package;
             switch (type)
             {
@@ -160,20 +166,21 @@ namespace Brunsker.Integracao.WorkService
                     successful = await ProdutoAsync(msg, package);
                     break;
 
-                //case ("Testes4"):
-                //    package = "";
-                //    Async(msg, package);
-                //    break;
-
-                //case ("Testes5"):
-                //    package = "";
-                //    Async(msg, package);
-                //    break;
+                case ("Integracao_Consulta_Cliente"):
+                    package = "PKG_BS_CONSULTAS.CONSULTAR_CLIENTES";
+                    successful = await ConsultaClienteAsync(msg, package);
+                    break;
 
                 default:
+                    successful = false;
                     break;
             }
             return successful;
+        }
+
+        private static Task<bool> ConsultaClienteAsync(string msg, string package)
+        {
+            throw new NotImplementedException();
         }
 
         public static async Task<bool> NotaFiscalEntradaAsync(string notasFiscaisEntradaJson, string package)
@@ -218,11 +225,18 @@ namespace Brunsker.Integracao.WorkService
             catch (Exception e)
             {
                 //_logger.LogError(e.Message);
+                ConsoleColor cor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(e.Message);
+                Console.ForegroundColor = cor;
+
+                var listaux = list.Find(l => l.Item.Equals(notasFiscaisEntradaJson));
+                list.Remove(listaux);
+                listaux.LogErro = e.Message + e.StackTrace;
+                list.Add(listaux);
+
                 return false;
             }
-
-
         }
 
         public static async Task<bool> NotaFiscalSaidaAsync(string notasFiscaisSaidaJson, string package)
@@ -265,7 +279,16 @@ namespace Brunsker.Integracao.WorkService
             catch (Exception e)
             {
                 //_logger.LogError(e.Message);
+                ConsoleColor cor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(e.Message);
+                Console.ForegroundColor = cor;
+
+                var listaux = list.Find(l => l.Item.Equals(notasFiscaisSaidaJson));
+                list.Remove(listaux);
+                listaux.LogErro = e.Message + e.StackTrace;
+                list.Add(listaux);
+
                 return false;
             }
 
@@ -326,7 +349,16 @@ namespace Brunsker.Integracao.WorkService
             catch (Exception e)
             {
                 //_logger.LogError(e.Message);
+                ConsoleColor cor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(e.Message);
+                Console.ForegroundColor = cor;
+
+                var listaux = list.Find(l => l.Item.Equals(produtosJson));
+                list.Remove(listaux);
+                listaux.LogErro = e.Message + e.StackTrace;
+                list.Add(listaux);
+
                 return false;
             }
         }

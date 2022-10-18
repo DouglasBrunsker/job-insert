@@ -12,16 +12,15 @@ namespace ConsoleTesteJobInsert
 {
     public class Program
     {
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
-            await PublishMessageRabbitAsync();
+            PublishMessageRabbit();
         }
 
-        public static async Task PublishMessageRabbitAsync()
+        public static void PublishMessageRabbit()
         {
             try
             {
-                EventingBasicConsumer consumer = null;
                 var factory = new ConnectionFactory() { HostName = "144.22.203.207", UserName = "admin", Password = "brunsker" };
                 var routingKey = "Producao";
 
@@ -56,6 +55,13 @@ namespace ConsoleTesteJobInsert
 
                     properties.Type = "Integracao_Produto";
                     body = Encoding.UTF8.GetBytes(prod.Replace("96934", $"{i}"));
+                    channel.BasicPublish(exchange: "",
+                                         routingKey: routingKey,
+                                         basicProperties: properties,
+                                         body: body);
+
+                    properties.Type = "Integracao_Consulta_Cliente";
+                    body = Encoding.UTF8.GetBytes(prod.Replace("1286", $"{i}"));
                     channel.BasicPublish(exchange: "",
                                          routingKey: routingKey,
                                          basicProperties: properties,
