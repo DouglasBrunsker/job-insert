@@ -34,9 +34,10 @@ namespace Brunsker.Integracao.WorkService
             .Build();
 
             string conexao = config["ConnectionString"];
+            ClientConfiguration clientConfiguration = config.GetRequiredSection("ClientSettings").Get<ClientConfiguration>();
             ConfigRabbit rabbitConfig = config.GetRequiredSection("RabbitMQ").Get<ConfigRabbit>();
 
-            ConsumirRabbitMQ rabbitMQ = new ConsumirRabbitMQ(rabbitConfig, conexao);
+            ConsumirRabbitMQ rabbitMQ = new ConsumirRabbitMQ(rabbitConfig, conexao, clientConfiguration);
         }
         
 

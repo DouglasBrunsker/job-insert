@@ -1,4 +1,5 @@
 ﻿using Brunsker.Integracao.Domain.Models;
+using Brunsker.Integracao.Domain.Enums;
 using Dapper;
 using Dapper.Oracle;
 using Microsoft.Extensions.Logging;
@@ -19,6 +20,7 @@ namespace Brunsker.Integracao.WorkService
     {
         private static ConfigRabbit _rabbit;
         private static string _connection;
+        private static ClientConfiguration _clientConfig;
         private static readonly ILogger<ConsumirRabbitMQ> _logger;
         private static List<FilaMorta> list = null;
 
@@ -30,8 +32,9 @@ namespace Brunsker.Integracao.WorkService
         //private const string RetryQueue = "Fila Morta";
         #endregion
 
-        public ConsumirRabbitMQ(ConfigRabbit rabbit, string connection)
+        public ConsumirRabbitMQ(ConfigRabbit rabbit, string connection, ClientConfiguration clientConfiguration)
         {
+            _clientConfig = clientConfiguration;
             _rabbit = rabbit;
             _connection = connection;
             ConsomeRabbit();
@@ -44,7 +47,7 @@ namespace Brunsker.Integracao.WorkService
                 EventingBasicConsumer consumer = null;
 
                 string queue = _rabbit.Queue;
-                string[] types = _rabbit.Types.Split(";");
+                List<string> types = new List<string> (_rabbit.Types.Split(";"));
                 var factory = new ConnectionFactory()
                 {
                     HostName = _rabbit.HostName,
@@ -56,6 +59,8 @@ namespace Brunsker.Integracao.WorkService
                 var channel = _connection.CreateModel();
 
                 consumer = new EventingBasicConsumer(channel);
+
+                EClientes cliente = (EClientes)_clientConfig.ClientId;
 
                 //TODO apagar depois
                 #region Teste apagar depois
@@ -107,26 +112,46 @@ namespace Brunsker.Integracao.WorkService
                 {
                     var type = ea.BasicProperties.Type;
                     var body = ea.Body.ToArray();
-
                     var msg = Encoding.UTF8.GetString(body);
-
-                    bool successful = await Sorting(msg, type);
-
-                    if (successful)
+                    try
                     {
-                        channel.BasicAck(ea.DeliveryTag, false);
-                    }
-                    else
-                    {
-                        channel.BasicReject(ea.DeliveryTag, false);
-                        list.Add(new FilaMorta
+                        if (ea.BasicProperties.Headers.ContainsKey("Client") && types.Contains(type))
                         {
-                            DateTime = DateTime.Now,
-                            Item = msg,
-                            Type = type
-                        });
+                            var client = ea.BasicProperties.Headers["Client"].ToString();
+                            if (client == _clientConfig.ClientId.ToString())
+                            {
+                                bool successful = await Sorting(msg, type);
+
+                                if (successful)
+                                {
+                                    channel.BasicAck(ea.DeliveryTag, false);
+                                }
+                            }
+                            else
+                            {
+                                channel.BasicNack(ea.DeliveryTag, false, true);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("Não contém 'Cliente' ou o tipo da fila está errado.");
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        ea.BasicProperties.Headers.Add("Error", $"Cliente: {cliente} - " + e.Message + " " + e.StackTrace);
+                        
+                        channel.BasicAck(ea.DeliveryTag, false);
+                        channel.BasicPublish(exchange: "",
+                                         routingKey: "Fila Morta",
+                                         basicProperties: ea.BasicProperties,
+                                         body: body);
+                        
+                        //channel.BasicReject(ea.DeliveryTag, false);
+                        Console.WriteLine(e.Message);
                     }
                 };
+
                 channel.BasicConsume(queue: queue,
                                         autoAck: false,
                                         consumer: consumer);
@@ -149,38 +174,40 @@ namespace Brunsker.Integracao.WorkService
         {
             bool successful;
             string package;
-            switch (type)
+            try
             {
-                case ("Integracao_NotaFiscalEntrada"):
-                    package = "pkg_webserv_insert_bsnotas.PROC_INS_PCNFENT";
-                    successful = await NotaFiscalEntradaAsync(msg, package);
-                    break;
+                switch (type)
+                {
+                    case ("Integracao_NotaFiscalEntrada"):
+                        package = "pkg_webserv_insert_bsnotas.PROC_INS_PCNFENT";
+                        successful = await NotaFiscalEntradaAsync(msg, package);
+                        break;
 
-                case ("Integracao_NotaFiscalSaida"):
-                    package = "pkg_webserv_insert_bsnotas.PROC_INS_PCNFSAID";
-                    successful = await NotaFiscalSaidaAsync(msg, package);
-                    break;
+                    case ("Integracao_NotaFiscalSaida"):
+                        package = "pkg_webserv_insert_bsnotas.PROC_INS_PCNFSAID";
+                        successful = await NotaFiscalSaidaAsync(msg, package);
+                        break;
 
-                case ("Integracao_Produto"):
-                    package = "pkg_webserv_insert_bsnotas.PROC_INS_PCPRODUT";
-                    successful = await ProdutoAsync(msg, package);
-                    break;
+                    case ("Integracao_Produto"):
+                        package = "pkg_webserv_insert_bsnotas.PROC_INS_PCPRODUT";
+                        successful = await ProdutoAsync(msg, package);
+                        break;
 
-                case ("Integracao_Consulta_Cliente"):
-                    package = "PKG_BS_CONSULTAS.CONSULTAR_CLIENTES";
-                    successful = await ConsultaClienteAsync(msg, package);
-                    break;
+                    //case ("Integracao_Consulta_Cliente"):
+                    //    package = "PKG_BS_CONSULTAS.CONSULTAR_CLIENTES";
+                    //    successful = await ConsultaClienteAsync(msg, package);
+                    //    break;
 
-                default:
-                    successful = false;
-                    break;
+                    default:
+                        successful = false;
+                        break;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
             }
             return successful;
-        }
-
-        private static Task<bool> ConsultaClienteAsync(string msg, string package)
-        {
-            throw new NotImplementedException();
         }
 
         public static async Task<bool> NotaFiscalEntradaAsync(string notasFiscaisEntradaJson, string package)
@@ -229,13 +256,7 @@ namespace Brunsker.Integracao.WorkService
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(e.Message);
                 Console.ForegroundColor = cor;
-
-                var listaux = list.Find(l => l.Item.Equals(notasFiscaisEntradaJson));
-                list.Remove(listaux);
-                listaux.LogErro = e.Message + e.StackTrace;
-                list.Add(listaux);
-
-                return false;
+                throw e;
             }
         }
 
@@ -284,12 +305,7 @@ namespace Brunsker.Integracao.WorkService
                 Console.WriteLine(e.Message);
                 Console.ForegroundColor = cor;
 
-                var listaux = list.Find(l => l.Item.Equals(notasFiscaisSaidaJson));
-                list.Remove(listaux);
-                listaux.LogErro = e.Message + e.StackTrace;
-                list.Add(listaux);
-
-                return false;
+                throw e;
             }
 
         }
@@ -354,12 +370,7 @@ namespace Brunsker.Integracao.WorkService
                 Console.WriteLine(e.Message);
                 Console.ForegroundColor = cor;
 
-                var listaux = list.Find(l => l.Item.Equals(produtosJson));
-                list.Remove(listaux);
-                listaux.LogErro = e.Message + e.StackTrace;
-                list.Add(listaux);
-
-                return false;
+                throw e;
             }
         }
     }

@@ -2,6 +2,7 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -36,7 +37,10 @@ namespace ConsoleTesteJobInsert
                 byte[] body;
 
                 var properties = channel.CreateBasicProperties();
-                
+
+                properties.Headers = new Dictionary<string, object>();
+                properties.Headers.Add("Client", 608);
+
                 for (int i = 0; i < 50000; i++)
                 {
                     properties.Type = "Integracao_NotaFiscalEntrada";
@@ -60,12 +64,12 @@ namespace ConsoleTesteJobInsert
                                          basicProperties: properties,
                                          body: body);
 
-                    properties.Type = "Integracao_Consulta_Cliente";
-                    body = Encoding.UTF8.GetBytes(cliente.Replace("1286", $"{i}"));
-                    channel.BasicPublish(exchange: "",
-                                         routingKey: routingKey,
-                                         basicProperties: properties,
-                                         body: body);
+                    //properties.Type = "Integracao_Consulta_Cliente";
+                    //body = Encoding.UTF8.GetBytes(cliente.Replace("1286", $"{i}"));
+                    //channel.BasicPublish(exchange: "",
+                    //                     routingKey: routingKey,
+                    //                     basicProperties: properties,
+                    //                     body: body);
 
                     Thread.Sleep(1);
                 }
